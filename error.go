@@ -10,17 +10,27 @@ type Error interface {
 
 	Code() int
 	Message() string
+	Data() interface{}
 }
 
 type ErrorPayload struct {
-	CodePayload    int    `json:"code"`
-	MessagePayload string `json:"message"`
+	CodePayload    int         `json:"code"`
+	MessagePayload string      `json:"message"`
+	DataPlayload   interface{} `json:"data"`
 }
 
 func New(code int, message string) Error {
 	return ErrorPayload{
 		CodePayload:    code,
 		MessagePayload: message,
+	}
+}
+
+func NewWithData(code int, message string, data interface{}) Error {
+	return ErrorPayload{
+		CodePayload:    code,
+		MessagePayload: message,
+		DataPlayload:   data,
 	}
 }
 
@@ -35,6 +45,7 @@ func NewErrorPayloadFromError(errx Error) *ErrorPayload {
 	return &ErrorPayload{
 		CodePayload:    errx.Code(),
 		MessagePayload: errx.Message(),
+		DataPlayload:   errx.Data(),
 	}
 }
 
@@ -46,8 +57,16 @@ func (thisRef ErrorPayload) Message() string {
 	return thisRef.MessagePayload
 }
 
+func (thisRef ErrorPayload) Data() interface{} {
+	return thisRef.DataPlayload
+}
+
 func (thisRef ErrorPayload) String() string {
-	return fmt.Sprintf("message: %s, code: %d", thisRef.MessagePayload, thisRef.CodePayload)
+	if thisRef.DataPlayload != nil {
+		return fmt.Sprintf("code: %d, message: %s, data: %v", thisRef.CodePayload, thisRef.MessagePayload, thisRef.DataPlayload)
+	}
+
+	return fmt.Sprintf("code: %d, message: %s", thisRef.CodePayload, thisRef.MessagePayload)
 }
 
 func (thisRef ErrorPayload) Error() string {

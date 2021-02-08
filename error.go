@@ -15,8 +15,8 @@ type Error interface {
 
 type ErrorPayload struct {
 	CodePayload    int         `json:"code"`
-	MessagePayload string      `json:"message"`
-	DataPlayload   interface{} `json:"data"`
+	MessagePayload string      `json:"message,omitempty"`
+	DataPlayload   interface{} `json:"data,omitempty"`
 }
 
 func New(code int, message string) Error {
